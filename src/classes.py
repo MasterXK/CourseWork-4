@@ -82,15 +82,15 @@ class SJP(APIProcessor):
                 key = 'keywords[%d][skwc]' % num_of_vacancy
                 self.params[key] = srch_params['skwc']
 
-        for i in range(5):
-            self.params['page'] = i
-            response = requests.get('https://api.superjob.ru/2.0/vacancies',
-                                    params=self.params, headers=self.headers).json()['objects']
-
-            for vacancy in response:
-                vacancies.append(Vacancy(name=vacancy['profession'],
-                                         salary=[vacancy['payment_from'], vacancy['payment_to']],
-                                         description=vacancy['vacancyRichText'],
-                                         url=vacancy['link']))
+            for i in range(5):
+                self.params['page'] = i
+                response = requests.get('https://api.superjob.ru/2.0/vacancies',
+                                        params=self.params, headers=self.headers).json()['objects']
+        
+                for vacancy in response:
+                    vacancies.append(Vacancy(name=vacancy['profession'],
+                                             salary=[vacancy['payment_from'], vacancy['payment_to']],
+                                             description=vacancy['vacancyRichText'],
+                                             url=vacancy['link']))
 
         return vacancies
