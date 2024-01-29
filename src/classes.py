@@ -15,19 +15,29 @@ class Vacancy:
         self.url = url
 
     def __gt__(self, other):
-        pass
+        self_mid_val = (self.salsry[1] - self.salary[0]) / 2
+        other_mid_val = (other.salsry[1] - other.salary[0]) / 2
+        return self_mid_val > other_mid_val
 
     def __lt__(self, other):
-        pass
+        self_mid_val = (self.salsry[1] - self.salary[0]) / 2
+        other_mid_val = (other.salsry[1] - other.salary[0]) / 2
+        return self_mid_val < other_mid_val
 
     def __eq__(self, other):
-        pass
+        self_mid_val = (self.salsry[1] - self.salary[0]) / 2
+        other_mid_val = (other.salsry[1] - other.salary[0]) / 2
+        return self_mid_val == other_mid_val
 
     def __ge__(self, other):
-        pass
+        self_mid_val = (self.salsry[1] - self.salary[0]) / 2
+        other_mid_val = (other.salsry[1] - other.salary[0]) / 2
+        return self_mid_val >= other_mid_val
 
     def __le__(self, other):
-        pass
+        self_mid_val = (self.salsry[1] - self.salary[0]) / 2
+        other_mid_val = (other.salsry[1] - other.salary[0]) / 2
+        return self_mid_val <= other_mid_val
 
 
 class SJP(APIProcessor):
