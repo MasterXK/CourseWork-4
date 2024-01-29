@@ -92,3 +92,5 @@ class SJP(APIProcessor):
                                          salary=[vacancy['payment_from'], vacancy['payment_to']],
                                          description=vacancy['vacancyRichText'],
                                          url=vacancy['link']))
+
+        return vacancies
