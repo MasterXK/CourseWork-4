@@ -136,7 +136,7 @@ class SJProcessor(APIProcessor):
 
 class HHProcessor(APIProcessor):
     headers = {'HH-User-Agent': 'Kursovaya/1.0 (vavilon164@yandex.ru)'}
-    params = {'per_page': 20, 'page': 0}
+    params = {'per_page': 10, 'page': 0}
 
     def get_vacancies(self, keywords: list[dict]):
         """
