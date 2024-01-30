@@ -2,7 +2,6 @@ import os
 from pprint import pprint
 from src.classes import SJProcessor, HHProcessor, JSONHandler
 
-import requests
 import dotenv
 
 dotenv.load_dotenv()
@@ -58,9 +57,8 @@ def start_process():
 
     elif services_to_use in [2, 3]:
         vacancies.extend(hh_proc.get_vacancies(keywords))
-    print(vacancies)
+    pprint(vacancies)
     json_saver.save(vacancies)
-    # pprint(response, sort_dicts=False)
 
 
 if __name__ == '__main__':
