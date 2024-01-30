@@ -39,7 +39,7 @@ class Vacancy:
     def __init__(self, name: str = '', salary: list = (0, 0), description: str = '', url: str = ''):
         self.name = name
         self.salary = salary
-        self.salary.append((self.salary[1] - self.salary[0]) / 2)
+        self.salary.append((self.salary[1] - self.salary[0]) / 2 + self.salary[0])
         self.description = description
         self.url = url
 
@@ -81,7 +81,7 @@ class Vacancy:
 
 class SJProcessor(APIProcessor):
     headers = {'X-Api-App-Id': SJ_KEY}
-    params = {}
+    params = {'count': 10, 'page': 0}
 
     def get_vacancies(self, keywords: str | list[dict[str, str | int]]):
         """
@@ -103,7 +103,7 @@ class SJProcessor(APIProcessor):
             particular — точную фразу
             nein — слова-исключения
 
-        Функция возвращает 100 вакансий.
+        Функция возвращает 10 вакансий.
         :param keywords: Список параметров поиска
         :return: Список вакансий(объектов)
         """
@@ -122,23 +122,49 @@ class SJProcessor(APIProcessor):
                 key = 'keywords[%d][skwc]' % num_of_vacancy
                 self.params[key] = srch_params['skwc']
 
-        for i in range(5):
-            self.params['page'] = i
-            response = requests.get('https://api.superjob.ru/2.0/vacancies',
-                                    params=self.params, headers=self.headers).json()['objects']
+        response = requests.get('https://api.superjob.ru/2.0/vacancies',
+                                params=self.params, headers=self.headers).json()['objects']
 
-            for vacancy in response:
-                vacancies.append(Vacancy(name=vacancy['profession'],
-                                         salary=[vacancy['payment_from'], vacancy['payment_to']],
-                                         description=vacancy['candidat'],
-                                         url=vacancy['link']))
+        for vacancy in response:
+            vacancies.append(Vacancy(name=vacancy['profession'],
+                                     salary=[vacancy['payment_from'], vacancy['payment_to']],
+                                     description=vacancy['candidat'],
+                                     url=vacancy['link']))
 
         return vacancies
 
 
 class HHProcessor(APIProcessor):
-    def get_vacancies(self, text_for_search):
-        pass
+    headers = {'HH-User-Agent': 'Kursovaya/1.0 (vavilon164@yandex.ru)'}
+    params = {'per_page': 20, 'page': 0}
+
+    def get_vacancies(self, keywords: dict):
+        """
+        keywords = {'text': '', search_field': 'name/company_name/description', 'salary': int}
+        :param keywords:
+        :return:
+        """
+        vacancies = []
+        salary = [0, 0, 0]
+        self.params = keywords
+
+        response = requests.get('https://api.superjob.ru/2.0/vacancies',
+                                params=self.params, headers=self.headers).json()['items']
+
+        for vacancy in response:
+            try:
+                salary = [vacancy['salary']['from'], vacancy['salary']['to']]
+
+            except KeyError as err:
+                pass
+
+            finally:
+                vacancies.append(Vacancy(name=vacancy['name'],
+                                         salary=salary,
+                                         description=vacancy['snippet']['responsibility'],
+                                         url=vacancy['url']))
+
+        return vacancies
 
 
 class JSONHandler(Handler):

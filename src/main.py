@@ -1,6 +1,6 @@
 import os
 from pprint import pprint
-from src.classes import SJProcessor, JSONHandler
+from src.classes import SJProcessor, HHProcessor, JSONHandler
 
 import requests
 import dotenv
@@ -8,21 +8,24 @@ import dotenv
 dotenv.load_dotenv()
 SJ_KEY = os.getenv('SJ_API_KEY')
 
-headers = {'X-Api-App-Id': SJ_KEY}
-params = {'keywords[0][keys]': 'python',
-          'keywords[0][srws]': '1',
-          'keywords[0][skwc]': 'or',
+headers = {'HH-User-Agent': 'Kursovaya (vavilon164@yandex.ru)'}  # {'X-Api-App-Id': SJ_KEY}
+params = {'text': 'python',
+          'search_field': 'name',
           'page': 0}
 
 keywords = [{'keys': 'python',
-             'srws': '10',
+             'srws': '1',
              'skwc': 'or'}]
 
-response = requests.get('https://api.superjob.ru/2.0/vacancies',
-                        params=params, headers=headers).json()['objects']
+keywordsh = {'text': 'python',
+             'search_field': [{'value': 'name'}]}
 
-sj_proc = SJProcessor()
-json_saver = JSONHandler()
-json_saver.save(sj_proc.get_vacancies(keywords))
+response = requests.get('https://api.hh.ru/vacancies',
+                        params=params, headers=headers).json()['items']
 
-pprint(json_saver.read_all(), sort_dicts=False)
+# sj_proc = SJProcessor()
+# hh_proc = HHProcessor()
+# json_saver = JSONHandler()
+# json_saver.save(hh_proc.get_vacancies(keywordsh))
+
+pprint(response, sort_dicts=False)
