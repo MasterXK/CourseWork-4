@@ -76,7 +76,7 @@ class Vacancy:
                 f'{self.url}')
 
     def __repr__(self):
-        return
+        return self.name
 
 
 class SJProcessor(APIProcessor):
@@ -110,17 +110,17 @@ class SJProcessor(APIProcessor):
 
         vacancies = []
 
-        if type(keywords) is str:
-            self.params['keyword'] = keywords
+        for num_of_vacancy, srch_params in enumerate(keywords):
+            if len(srch_params) == 1:
+                self.params['keyword'] = srch_params['text']
 
-        else:
-            for num_of_vacancy, srch_params in enumerate(keywords):
+            else:
                 key = 'keywords[%d][keys]' % num_of_vacancy
-                self.params[key] = srch_params['keys']
+                self.params[key] = srch_params['text']
                 key = 'keywords[%d][srws]' % num_of_vacancy
-                self.params[key] = srch_params['srws']
+                self.params[key] = srch_params['param']
                 key = 'keywords[%d][skwc]' % num_of_vacancy
-                self.params[key] = srch_params['skwc']
+                self.params[key] = 'or'
 
         response = requests.get('https://api.superjob.ru/2.0/vacancies',
                                 params=self.params, headers=self.headers).json()['objects']
@@ -138,24 +138,31 @@ class HHProcessor(APIProcessor):
     headers = {'HH-User-Agent': 'Kursovaya/1.0 (vavilon164@yandex.ru)'}
     params = {'per_page': 20, 'page': 0}
 
-    def get_vacancies(self, keywords: dict):
+    def get_vacancies(self, keywords: list[dict]):
         """
         keywords = {'text': '', search_field': 'name/company_name/description', 'salary': int}
         :param keywords:
         :return:
         """
         vacancies = []
+        param_translate = {1: 'name', 2: 'company_name', 3: 'description'}
         salary = [0, 0, 0]
-        self.params = keywords
 
-        response = requests.get('https://api.superjob.ru/2.0/vacancies',
+        for srch_params in keywords:
+            if len(srch_params) == 1:
+                self.params['text'] = srch_params['text']
+            else:
+                self.params['text'] = srch_params['text']
+                self.params['search_field'] = param_translate[srch_params['param']]
+
+        response = requests.get('https://api.hh.ru/vacancies',
                                 params=self.params, headers=self.headers).json()['items']
 
         for vacancy in response:
             try:
                 salary = [vacancy['salary']['from'], vacancy['salary']['to']]
 
-            except KeyError as err:
+            except KeyError:
                 pass
 
             finally:
@@ -211,4 +218,4 @@ class JSONHandler(Handler):
                                   'salary': vacancy.salary,
                                   'url': vacancy.url})
 
-            json.dump(vacancies, file, ensure_ascii=False)
+            json.dump(vacancies, file, ensure_ascii=False, indent=4)
