@@ -2,6 +2,11 @@ class Vacancy:
     def __init__(self, name: str = '', salary: list = (0, 0), description: str = '', url: str = ''):
         self.name = name
         self.salary = salary
+
+        for i in range(len(salary)):
+            if salary[i] is None:
+                salary[i] = 0
+
         self.salary.append((self.salary[1] - self.salary[0]) / 2 + self.salary[0])
         self.description = description
         self.url = url

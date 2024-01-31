@@ -76,7 +76,8 @@ class HHProcessor(APIProcessor):
         """
         vacancies = []
         param_translate = {1: 'name', 2: 'company_name', 3: 'description'}
-        salary = [0, 0, 0]
+        salary_from = 0
+        salary_to = 0
 
         for srch_params in keywords:
             if len(srch_params) == 1:
@@ -90,14 +91,16 @@ class HHProcessor(APIProcessor):
 
         for vacancy in response:
             try:
-                salary = [vacancy['salary']['from'], vacancy['salary']['to']]
+                salary_from = vacancy['salary']['from']
+                salary_to = vacancy['salary']['to']
 
-            except KeyError:
+            except TypeError:
                 pass
 
             finally:
+
                 vacancies.append(Vacancy(name=vacancy['name'],
-                                         salary=salary,
+                                         salary=[salary_from, salary_to],
                                          description=vacancy['snippet']['responsibility'],
                                          url=vacancy['url']))
 

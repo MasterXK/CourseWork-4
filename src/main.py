@@ -63,4 +63,7 @@ def start_process():
 
 
 if __name__ == '__main__':
-    start_process()
+    keywords = [{'text': 'python', 'param': 1}]
+    hh_p = HHProcessor()
+    pprint(hh_p.get_vacancies(keywords))
+# start_process()
