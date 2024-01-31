@@ -65,11 +65,5 @@ def start_process():
 
 
 if __name__ == '__main__':
-    # keywords = [{'text': 'python', 'param': 1}]
-    # hh_p = HHProcessor()
-    # sj_p = SJProcessor()
-    # headers = {'X-Api-App-Id': SJ_KEY}
-    # params = {'count': 10, 'page': 0, 'keywords[0][keys]': 'python', 'keywords[0][srws]': 1, 'keywords[0][skwc]': 'or'}
-    # pprint(requests.get('https://api.superjob.ru/2.0/vacancies',
-    #                     params=params, headers=headers).json())
+
     start_process()
