@@ -2,6 +2,7 @@ import os
 from pprint import pprint
 from src.APIProcessorClasses import SJProcessor, HHProcessor
 from src.HandlerClasses import JSONHandler
+import requests
 
 import dotenv
 
@@ -56,14 +57,19 @@ def start_process():
     if services_to_use in [1, 3]:
         vacancies.extend(sj_proc.get_vacancies(keywords))
 
-    elif services_to_use in [2, 3]:
+    if services_to_use in [2, 3]:
         vacancies.extend(hh_proc.get_vacancies(keywords))
+
     pprint(vacancies)
     json_saver.save(vacancies)
 
 
 if __name__ == '__main__':
-    keywords = [{'text': 'python', 'param': 1}]
-    hh_p = HHProcessor()
-    pprint(hh_p.get_vacancies(keywords))
-# start_process()
+    # keywords = [{'text': 'python', 'param': 1}]
+    # hh_p = HHProcessor()
+    # sj_p = SJProcessor()
+    # headers = {'X-Api-App-Id': SJ_KEY}
+    # params = {'count': 10, 'page': 0, 'keywords[0][keys]': 'python', 'keywords[0][srws]': 1, 'keywords[0][skwc]': 'or'}
+    # pprint(requests.get('https://api.superjob.ru/2.0/vacancies',
+    #                     params=params, headers=headers).json())
+    start_process()

@@ -86,22 +86,22 @@ class HHProcessor(APIProcessor):
                 self.params['text'] = srch_params['text']
                 self.params['search_field'] = param_translate[srch_params['param']]
 
-        response = requests.get('https://api.hh.ru/vacancies',
-                                params=self.params, headers=self.headers).json()['items']
+            response = requests.get('https://api.hh.ru/vacancies',
+                                    params=self.params, headers=self.headers).json()['items']
 
-        for vacancy in response:
-            try:
-                salary_from = vacancy['salary']['from']
-                salary_to = vacancy['salary']['to']
+            for vacancy in response:
+                try:
+                    salary_from = vacancy['salary']['from']
+                    salary_to = vacancy['salary']['to']
 
-            except TypeError:
-                pass
+                except TypeError:
+                    pass
 
-            finally:
+                finally:
 
-                vacancies.append(Vacancy(name=vacancy['name'],
-                                         salary=[salary_from, salary_to],
-                                         description=vacancy['snippet']['responsibility'],
-                                         url=vacancy['url']))
+                    vacancies.append(Vacancy(name=vacancy['name'],
+                                             salary=[salary_from, salary_to],
+                                             description=vacancy['snippet']['responsibility'],
+                                             url=vacancy['url']))
 
         return vacancies
