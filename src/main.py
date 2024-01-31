@@ -1,6 +1,7 @@
 import os
 from pprint import pprint
-from src.classes import SJProcessor, HHProcessor, JSONHandler
+from src.APIProcessorClasses import SJProcessor, HHProcessor
+from src.HandlerClasses import JSONHandler
 
 import dotenv
 
