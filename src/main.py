@@ -127,6 +127,9 @@ def start_process():
         elif to_do == 4:
             break
 
+        else:
+            print('Выберите одну из опций')
+
 
 if __name__ == "__main__":
     start_process()
