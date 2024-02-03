@@ -3,7 +3,7 @@ from abc import ABC, abstractmethod
 
 class APIProcessor(ABC):
     @abstractmethod
-    def get_vacancies(self, text_for_search):
+    def get_vacancies(self, text_for_search, desired_salary):
         pass
 
 

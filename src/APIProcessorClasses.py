@@ -11,15 +11,15 @@ SJ_KEY = os.getenv('SJ_API_KEY')
 
 class SJProcessor(APIProcessor):
     headers = {'X-Api-App-Id': SJ_KEY}
-    params = {'count': 10, 'page': 0}
+    params = {'count': 100, 'page': 0}
 
-    def get_vacancies(self, keywords: str | list[dict[str, str | int]]):
+    def get_vacancies(self, keywords: str | list[dict[str, str | int]], salary):
         """
-        Принимает ключевые слова для поиска вакансий. Ключевые слова должны быть переданы в виде
-        [{'keys': '', 'srws': '', 'skwc': ''}, {...}],
-        либо обычной строкой(тогда фильтр будет по всему тексту вакансии).
-        Параметры srws и skwc обозначают критерии поиска ключевого слова keys.
-        Значения параметров могут быть:
+        Принимает ключевые слова и зарплату для поиска вакансий.
+        Каждому слову соответствует свой параметр srws.
+        Массив имеет вид: [{'text': '', 'param': 'srws'}, {...}].
+        Параметр srws обозначает критерии поиска ключевого слова keys.
+        Значения параметра могут быть:
         srws:
             1 — должность
             2 — название компании
@@ -27,13 +27,12 @@ class SJProcessor(APIProcessor):
             4 — требования к квалификации
             5 — условия работы
             10 — весь текст вакансии
-        skwc:
-            and — все слова
-            or — хотя бы одно слово
-            particular — точную фразу
-            nein — слова-исключения
 
-        Функция возвращает 10 вакансий.
+        Зарплата должна быть представлена массивом из 2 чисел: ['зарплата от', 'зарплата до']
+
+        Функция возвращает до 100 вакансий.
+
+        :param salary: Желаемая зарплата
         :param keywords: Список параметров поиска
         :return: Список вакансий(объектов)
         """
@@ -52,6 +51,9 @@ class SJProcessor(APIProcessor):
                 key = 'keywords[%d][skwc]' % num_of_vacancy
                 self.params[key] = 'or'
 
+        self.params['payment_from'] = salary[0]
+        self.params['payment_to'] = salary[1]
+
         response = requests.get('https://api.superjob.ru/2.0/vacancies',
                                 params=self.params, headers=self.headers).json()['objects']
 
@@ -61,27 +63,46 @@ class SJProcessor(APIProcessor):
                                      description=vacancy['candidat'],
                                      url=vacancy['link']))
 
+        vacancies.sort()
+
         return vacancies
 
 
 class HHProcessor(APIProcessor):
     headers = {'HH-User-Agent': 'Kursovaya/1.0 (vavilon164@yandex.ru)'}
-    params = {'per_page': 10, 'page': 0}
+    params = {'per_page': 100, 'page': 0}
 
-    def get_vacancies(self, keywords: list[dict]):
+    def get_vacancies(self, keywords: list[dict], salary):
         """
-        keywords = {'text': '', search_field': 'name/company_name/description', 'salary': int}
-        :param keywords:
-        :return:
+        Принимает ключевые слова и зарплату для поиска вакансий.
+        Каждому слову соответствует свой параметр поиска search_field
+        Массив имеет вид: [{'text': '', 'param': 'search_field'}, {...}],
+        либо обычной строкой(тогда фильтр будет по всему тексту вакансии).
+        Параметр search_field обозначают критерии поиска ключевого слова keys.
+        Значения параметра могут быть:
+        search_field:
+            name — должность
+            company_name — название компании
+            description — описание вакансии
+
+        Зарплата должна быть представлена массивом из 2 чисел: ['зарплата от', 'зарплата до']
+
+        Функция возвращает до 100 вакансий.
+
+        :param salary: Желаемая зарплата
+        :param keywords: Список параметров поиска
+        :return: Список вакансий(объектов)
         """
         vacancies = []
         param_translate = {1: 'name', 2: 'company_name', 3: 'description'}
         salary_from = 0
         salary_to = 0
+        self.params['salary'] = salary[0] + (salary[1] - salary[0]) / 2
 
         for srch_params in keywords:
             if len(srch_params) == 1:
                 self.params['text'] = srch_params['text']
+
             else:
                 self.params['text'] = srch_params['text']
                 self.params['search_field'] = param_translate[srch_params['param']]
@@ -103,5 +124,7 @@ class HHProcessor(APIProcessor):
                                              salary=[salary_from, salary_to],
                                              description=vacancy['snippet']['responsibility'],
                                              url=vacancy['url']))
+
+        vacancies.sort()
 
         return vacancies

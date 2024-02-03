@@ -44,4 +44,4 @@ class Vacancy:
                 f'{self.url}')
 
     def __repr__(self):
-        return self.name
+        return f'{self.name} {" - ".join(self.salary[:2] if 0 in self.salary else self.salary[0])}'

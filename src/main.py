@@ -14,7 +14,7 @@ def start_process():
     keywords = []
     sj_proc = SJProcessor()
     hh_proc = HHProcessor()
-    json_saver = JSONHandler()
+    json_handler = JSONHandler()
     keyword = ''
 
     while True:
@@ -47,6 +47,18 @@ def start_process():
         if not more_keys:
             break
 
+    desired_salary = input('Введите желаемую зарплату: ')
+    desired_salary.strip()
+    salary = []
+    if '-' in desired_salary:
+        for elem in desired_salary.split('-'):
+            salary.append(int(elem))
+
+    elif desired_salary:
+        variation = int(input('Введите возможное отклонение(+-) от желаемой зарплаты(по умолчанию 10 000): '))
+        if variation:
+            salary = [int(desired_salary) - variation, int(desired_salary) + variation]
+
     services_to_use = int(input('Где искать?\n'
                                 '\t 1 - SuperJob\n'
                                 '\t 2 - HeadHunter\n'
@@ -55,15 +67,22 @@ def start_process():
     vacancies = []
 
     if services_to_use in [1, 3]:
-        vacancies.extend(sj_proc.get_vacancies(keywords))
+        vacancies.extend(sj_proc.get_vacancies(keywords, salary))
 
     if services_to_use in [2, 3]:
-        vacancies.extend(hh_proc.get_vacancies(keywords))
+        vacancies.extend(hh_proc.get_vacancies(keywords, salary))
 
-    pprint(vacancies)
-    json_saver.save(vacancies)
+    if vacancies:
+        json_handler.save(vacancies)
+        print('Найденные вакансии сохранены.')
+
+    else:
+        print('Вакансий не найдено. Измените запрос.')
+        start_process()
+
+
+    print('')
 
 
 if __name__ == '__main__':
-
     start_process()
