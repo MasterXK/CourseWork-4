@@ -1,5 +1,11 @@
 class Vacancy:
-    def __init__(self, name: str = '', salary: list = (0, 0), description: str = '', url: str = ''):
+    def __init__(
+        self,
+        name: str = "",
+        salary: list = (0, 0),
+        description: str = "",
+        url: str = "",
+    ):
         self.name = name
         self.salary = salary
 
@@ -13,11 +19,11 @@ class Vacancy:
 
     @classmethod
     def from_dict(cls, vacancy_data: dict):
-        name = vacancy_data['name']
-        salary = vacancy_data['salary']
-        salary.append((vacancy_data['salary'][1] - vacancy_data['salary'][0]) / 2)
-        description = vacancy_data['description']
-        url = vacancy_data['url']
+        name = vacancy_data["name"]
+        salary = vacancy_data["salary"]
+        salary.append((vacancy_data["salary"][1] - vacancy_data["salary"][0]) / 2)
+        description = vacancy_data["description"]
+        url = vacancy_data["url"]
 
         return cls(name=name, salary=salary, description=description, url=url)
 
@@ -37,11 +43,13 @@ class Vacancy:
         return self.salary[2] <= other.salary[2]
 
     def __str__(self):
-        return (f'{'-' * 50}\n'
-                f'{self.name}\n'
-                f'{self.description}\n'
-                f'Зарплата от {self.salary[0]} до {self.salary[1]}\n'
-                f'{self.url}')
+        return (
+            f"{" - " * 50}\n"
+            f"{self.name}\n"
+            f"{self.description}\n"
+            f"Зарплата от {self.salary[0]} до {self.salary[1]}\n"
+            f"{self.url}"
+        )
 
     def __repr__(self):
         return f'{self.name} {" - ".join(self.salary[:2] if 0 in self.salary else self.salary[0])}'
