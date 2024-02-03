@@ -63,7 +63,7 @@ class SJProcessor(APIProcessor):
                                      description=vacancy['candidat'],
                                      url=vacancy['link']))
 
-        vacancies.sort()
+        vacancies.sort(reverse=True)
 
         return vacancies
 
@@ -97,7 +97,7 @@ class HHProcessor(APIProcessor):
         param_translate = {1: 'name', 2: 'company_name', 3: 'description'}
         salary_from = 0
         salary_to = 0
-        self.params['salary'] = salary[0] + (salary[1] - salary[0]) / 2
+        self.params['salary'] = round(salary[0] + (salary[1] - salary[0]) / 2)
 
         for srch_params in keywords:
             if len(srch_params) == 1:
@@ -108,9 +108,10 @@ class HHProcessor(APIProcessor):
                 self.params['search_field'] = param_translate[srch_params['param']]
 
             response = requests.get('https://api.hh.ru/vacancies',
-                                    params=self.params, headers=self.headers).json()['items']
+                                    params=self.params, headers=self.headers)
+            vacs = response.json()['items']
 
-            for vacancy in response:
+            for vacancy in vacs:
                 try:
                     salary_from = vacancy['salary']['from']
                     salary_to = vacancy['salary']['to']
@@ -125,6 +126,6 @@ class HHProcessor(APIProcessor):
                                              description=vacancy['snippet']['responsibility'],
                                              url=vacancy['url']))
 
-        vacancies.sort()
+        vacancies.sort(reverse=True)
 
         return vacancies

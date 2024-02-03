@@ -8,7 +8,15 @@ class JSONHandler(Handler):
         self.file_name = file_name
 
     def read_if(self, salary: list[int] | int, keyword: str) -> list[Vacancy]:
-        all_vacancies = self.read_all()
+        """
+        Функция считывает из файла только вакансии соответствующие параметрам.
+
+        :param salary: Зарплата в виде ['from', 'to'] или 'значение'. Если указано значение,
+        то проверяется его вхождение в промежуток 'from-to'.
+        :param keyword: Ключевое слово. Проверяется по названию и описанию.
+        :return: Список вакансий(объектов)
+        """
+        all_vacancies = self.read()
         sorted_vacancies = []
         add_vacancy = True
         for vacancy in all_vacancies:
@@ -31,10 +39,12 @@ class JSONHandler(Handler):
 
         return sorted_vacancies
 
-    def read_all(self) -> list[dict]:
+    def read(self, number_to_read=False) -> list[dict]:
         with open(self.file_name, encoding='UTF-8') as file:
             vacancies = json.load(file)
 
+        if number_to_read:
+            return vacancies[:number_to_read]
         return vacancies
 
     def save(self, vacancies_list: Vacancy):

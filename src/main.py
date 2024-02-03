@@ -80,8 +80,10 @@ def start_process():
         print('Вакансий не найдено. Измените запрос.')
         start_process()
 
-
-    print('')
+    make_top = input('Вывести топ вакансий по заработной плате? 1 - Да, 0 - Нет')
+    if make_top:
+        num_of_vacancies = int(input('Сколько вакансий вывести?'))
+        pprint(json_handler.read(num_of_vacancies), sort_dicts=False)
 
 
 if __name__ == '__main__':
