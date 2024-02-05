@@ -50,6 +50,3 @@ class Vacancy:
             f"Зарплата от {self.salary[0]} до {self.salary[1]}\n"
             f"{self.url}"
         )
-
-    def __repr__(self):
-        return f'{self.name} {" - ".join(self.salary[:2] if 0 in self.salary else self.salary[0])}'
