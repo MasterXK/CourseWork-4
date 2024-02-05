@@ -64,8 +64,10 @@ def start_process():
                 "Введите возможное отклонение(+-) от желаемой зарплаты(по умолчанию 10 000): "
             )
         )
-        if variation:
-            salary = [int(desired_salary) - variation, int(desired_salary) + variation]
+        if not variation:
+            variation = 10 000
+            
+        salary = [int(desired_salary) - variation, int(desired_salary) + variation]
 
     services_to_use = int(
         input(
