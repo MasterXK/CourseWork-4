@@ -133,7 +133,7 @@ class HHProcessor(APIProcessor):
                             name=vacancy["name"],
                             salary=[salary_from, salary_to],
                             description=vacancy["snippet"]["responsibility"],
-                            url=vacancy["url"],
+                            url=vacancy["alternate_url"],
                         )
                     )
 

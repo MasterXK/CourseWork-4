@@ -59,13 +59,14 @@ def start_process():
             salary.append(int(elem))
 
     elif desired_salary:
-        variation = int(
-            input(
+        variation = input(
                 "Введите возможное отклонение(+-) от желаемой зарплаты(по умолчанию 10 000): "
             )
-        )
         if not variation:
-            variation = 10 000
+            variation = 10000
+
+        else:
+            variation = int(variation)
             
         salary = [int(desired_salary) - variation, int(desired_salary) + variation]
 
